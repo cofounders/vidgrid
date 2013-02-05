@@ -2,13 +2,14 @@
 	"name": "vidgrid",
 	"version": "0.0.0",
 	"description": "Multi user video chat",
-	"main": "index.js",
+	"main": "server.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"private": true,
 	"dependencies": {
-		"express": "3.x"
+		"express": "3.x",
+		"randword": "*"
 	},
 	"repository": {
 		"type": "git",
