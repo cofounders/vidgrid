@@ -21,7 +21,10 @@ app.get('/channel/:id', function(req, res) {
 
 app.post('/channel', function(req, res) {
 	randword(function(err, word) {
-		channels[word] = {hello: 'world', id: word};
+		channels[word] = {
+			id: word,
+			occupants: []
+		};
 		res.json(channels[word]);
 	});
 });
