@@ -18,17 +18,17 @@ app.configure(function() {
 
 app.post('/channel', function(req, res) {
 	var occupant = req.body.occupant;
-	if (occupant && occupant.id) {
-		randword(function(err, word) {
-			var channel = channels[word] = {
-				id: word,
-				occupants: [occupant]
-			};
-			res.json(channel);
-		});
-	} else {
-		res.json(403, {error: 'Invalid occupant'});
-	}
+
+	if (!occupant || !occupant.id || !occupant.sdp)
+		return res.json(403, {error: 'Invalid occupant'});
+
+	randword(function(err, word) {
+		var channel = channels[word] = {
+			id: word,
+			occupants: [occupant]
+		};
+		res.json(channel);
+	});
 });
 
 app.get('/channel/:id', function(req, res) {
@@ -42,12 +42,15 @@ app.get('/channel/:id', function(req, res) {
 app.post('/channel/:id', function(req, res) {
 	var channel = channels[req.params.id],
 		occupant = req.body.occupant;
-	if (channel) {
-		channel.occupants.push(occupant);
-		res.json({status: 'success'});
-	} else {
-		res.json(404, {error: 'Channel not found'});
-	}
+
+	if (!channel)
+		return res.json(404, {error: 'Channel not found'});
+
+	if (!occupant || !occupant.id || !occupant.sdp)
+		return res.json(403, {error: 'Invalid occupant'});
+
+	channel.occupants.push(occupant);
+	res.json({status: 'success'});
 });
 
 app.delete('/channel/:id', function(req, res) {

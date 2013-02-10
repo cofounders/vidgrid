@@ -39,6 +39,51 @@ function ($, app, Router) {
 					console.log("Got the video");
 				};
 				video.play();
+
+				var pc_config = {
+						iceServers: [
+							{
+								url: "stun:stun.l.google.com:19302"
+							}
+						]
+					},
+					pc_constraints = {
+						optional: [
+							{
+								DtlsSrtpKeyAgreement: true
+							}
+						]
+					},
+					constraints = {
+						optional: [],
+						mandatory: {
+							MozDontOfferDataChannel: true
+						}
+					},
+					sdpConstraints = {
+						mandatory: {
+							OfferToReceiveAudio: true,
+							OfferToReceiveVideo: true
+						}
+					};
+
+					function mergeConstraints(cons1, cons2) {
+						var merged = cons1;
+						for (var name in cons2.mandatory) {
+							merged.mandatory[name] = cons2.mandatory[name];
+						}
+						merged.optional.concat(cons2.optional);
+						return merged;
+					}
+
+				var rtcpc = new webkitRTCPeerConnection(pc_config, pc_constraints);
+				rtcpc.addstream(localMediaStream);
+
+				rtcpc.createOffer(
+					setLocalAndSendMessage,
+					null,
+					mergeConstraints(constraints, sdpConstraints)
+				);
 			},
 			function(err) {
 				console.log("The following error occured: " + err);
