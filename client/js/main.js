@@ -77,11 +77,21 @@ function ($, app, Router) {
 					}
 
 				var rtcpc = new webkitRTCPeerConnection(pc_config, pc_constraints);
-				rtcpc.addstream(localMediaStream);
+				rtcpc.addStream(localMediaStream);
 
 				rtcpc.createOffer(
-					setLocalAndSendMessage,
-					null,
+					function(sessionDescription) {
+						console.log('Created offer', sessionDescription);
+						$.post('http://localhost:3000/channel', {
+							occupant: {
+								id: 'seb',
+								sdp: sessionDescription
+							}
+						});
+					},
+					function() {
+						console.log('ERROR: Cannot create offer', arguments);
+					},
 					mergeConstraints(constraints, sdpConstraints)
 				);
 			},
