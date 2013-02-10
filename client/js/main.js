@@ -24,6 +24,7 @@ function ($, app, Router) {
 
 	$('button').click(function () {
 		navigator.getMedia = (
+			navigator.getMedia ||
 			navigator.getUserMedia ||
 			navigator.webkitGetUserMedia ||
 			navigator.mozGetUserMedia ||
@@ -34,7 +35,7 @@ function ($, app, Router) {
 			function(localMediaStream) {
 				var video = document.querySelector('video');
 				video.src = window.URL.createObjectURL(localMediaStream);
-				video.onloadedmetadata = function(e) {
+				video.onloadedmetadata = function(event) {
 					console.log("Got the video");
 				};
 				video.play();
